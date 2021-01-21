@@ -1,7 +1,5 @@
 package se.Mueller;
 
-import org.graalvm.compiler.lir.LIRInstruction;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -16,28 +14,59 @@ public class UserDaoWithJPAImpl implements UserDao {
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.persist(new User(id, userName, password, firstName, lastName, email, phoneNumber));
+        em.persist(new User(id,userName,password,firstName,lastName,email,phoneNumber));
         em.getTransaction().commit();
-
     }
 
     @Override
     public List<User> findByFirstName(String firstName) {
-        return null;
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        List<User> resultList = em.createQuery("from User user where user.firstName = :firstName", User.class).setParameter("firstName", firstName).getResultList();
+
+        em.getTransaction().commit();
+        return resultList;
     }
 
     @Override
     public List<User> findByLastName(String lastName) {
-        return null;
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        List<User> resultList = em.createQuery("from User user where user.lastName = :lastName", User.class).setParameter("lastName", lastName).getResultList();
+
+        em.getTransaction().commit();
+        return resultList;
     }
 
     @Override
     public boolean updatePhoneNumber(String id, String phoneNumber) {
-        return false;
+        boolean success =  false;
+
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        User user = em.find(User.class, id);
+        if(user != null){
+            user.setPhoneNumber(phoneNumber);
+            success = true;
+            em.getTransaction().commit();
+        }
+
+        return success;
     }
 
     @Override
     public boolean removeUser(String id) {
-        return false;
+
+        boolean success =  false;
+
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        User user = em.find(User.class, id);
+        if(user != null){
+            em.remove(user);
+            success = true;
+            em.getTransaction().commit();
+        }
+        return success;
     }
 }
