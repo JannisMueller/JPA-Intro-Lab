@@ -1,19 +1,27 @@
 package se.Mueller;
 
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.List;
+
 public class TestMain {
 
     public static void main(String[] args) {
 
-        UserDao userDao = new UserDaoWithJPAImpl();
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAUser");
 
-        userDao.createUser("500603-4238","janmue","rest","Jannis","Mueller","test@test.se","0723068922");
+        EntityManager em1 = emf.createEntityManager();
+        em1.getTransaction().begin();
+        em1.persist(new User("53603-4238", "janmue", "rest", "Jannis", "Mueller", "test@test.se", "0723068922"));
+        em1.getTransaction().commit();
 
-        System.out.println(userDao.findByFirstName("Jannis"));
-        System.out.println(userDao.findByLastName("Knutson"));
-        System.out.println(userDao.updatePhoneNumber("500603-4238","updatedPhoneNumber"));
-        System.out.println(userDao.removeUser("841014-1221"));
-        System.out.println(userDao.findByFirstName("Jannis"));
+        EntityManager em2 = emf.createEntityManager();
+        em2.getTransaction().begin();
+        List<User> resultList = em2.createQuery("from User user where user.firstName = :firstName", User.class).setParameter("firstName", "Jannis").getResultList();
+        System.out.println(resultList);
+        em2.getTransaction().commit();
 
 
 
