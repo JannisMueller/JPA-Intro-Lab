@@ -16,6 +16,7 @@ public class UserDaoWithJPAImpl implements UserDao {
         em.getTransaction().begin();
         em.persist(new User(id,userName,password,firstName,lastName,email,phoneNumber));
         em.getTransaction().commit();
+        em.close();
     }
 
     @Override
@@ -25,7 +26,9 @@ public class UserDaoWithJPAImpl implements UserDao {
         List<User> resultList = em.createQuery("from User user where user.firstName = :firstName", User.class).setParameter("firstName", firstName).getResultList();
 
         em.getTransaction().commit();
+        em.close();
         return resultList;
+
     }
 
     @Override
@@ -35,6 +38,7 @@ public class UserDaoWithJPAImpl implements UserDao {
         List<User> resultList = em.createQuery("from User user where user.lastName = :lastName", User.class).setParameter("lastName", lastName).getResultList();
 
         em.getTransaction().commit();
+        em.close();
         return resultList;
     }
 
@@ -50,7 +54,7 @@ public class UserDaoWithJPAImpl implements UserDao {
             success = true;
             em.getTransaction().commit();
         }
-
+        em.close();
         return success;
     }
 
@@ -67,6 +71,7 @@ public class UserDaoWithJPAImpl implements UserDao {
             success = true;
             em.getTransaction().commit();
         }
+        em.close();
         return success;
     }
 }

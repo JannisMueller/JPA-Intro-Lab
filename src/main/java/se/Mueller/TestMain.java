@@ -11,17 +11,42 @@ public class TestMain {
     public static void main(String[] args) {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAUser");
+        EntityManager em = emf.createEntityManager();
 
-        EntityManager em1 = emf.createEntityManager();
-        em1.getTransaction().begin();
-        em1.persist(new User("53603-4238", "janmue", "rest", "Jannis", "Mueller", "test@test.se", "0723068922"));
-        em1.getTransaction().commit();
+        em.getTransaction().begin();
+        em.persist(new User("51675-9238", "janmue", "rest", "Jannis", "Mueller", "test@test.se", "0723068922"));
+        em.getTransaction().commit();
 
-        EntityManager em2 = emf.createEntityManager();
-        em2.getTransaction().begin();
-        List<User> resultList = em2.createQuery("from User user where user.firstName = :firstName", User.class).setParameter("firstName", "Jannis").getResultList();
+
+        em.getTransaction().begin();
+        List<User> resultList = em.createQuery("from User user where user.firstName = :firstName", User.class).setParameter("firstName", "Jannis").getResultList();
         System.out.println(resultList);
-        em2.getTransaction().commit();
+        em.getTransaction().commit();
+
+        em.getTransaction().begin();
+        User user = em.find(User.class, "51675-9238");
+        if(user != null){
+            user.setPhoneNumber("0727328999");
+            em.getTransaction().commit();
+            System.out.println("User updated");
+        } else {
+            System.out.println("couldnt find user");
+        }
+
+        em.getTransaction().begin();
+        user = em.find(User.class,"51675-9238" );
+        if(user != null){
+            em.remove(user);
+            em.getTransaction().commit();
+            System.out.println("User removed");
+        } else {
+            System.out.println("couldnt find user");
+        }
+
+
+
+        em.close();
+        emf.close();
 
 
 
